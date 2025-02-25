@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload File Version</title>
+</head>
+<body>
+    <h1>Upload File Version</h1>
+
+    <!-- Display Success or Error Message -->
+    <p style="color: green;" th:if="${message}" th:text="${message}"></p>
+    <p style="color: red;" th:if="${error}" th:text="${error}"></p>
+
+    <!-- Upload Form -->
+    <form method="POST" th:action="@{/upload-version/{originalFileId}(originalFileId=1)}" enctype="multipart/form-data">
+        <label>Select File:</label>
+        <input type="file" name="file" required />
+        <button type="submit">Upload</button>
+    </form>
+
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
