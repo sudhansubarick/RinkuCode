@@ -79,13 +79,13 @@ public class FileService {
         // String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         // String newFileName = fileName + "_" + timestamp + fileExtension;
 
-        // ✅ Find the original file
+        //  Find the original file
         OriginalFile originalFile = originalFileRepository.findById(originalFileId)
                 .orElseThrow(() -> new RuntimeException("Original file not found"));
 
-                // ✅ Get latest version number (default to 0 if no previous versions exist)
+                //  Get latest version number (default to 0 if no previous versions exist)
                 int latestVersion = fileVersionRepository.findLatestVersionByOriginalFileId(originalFileId).orElse(0);
-                int newFileName = latestVersion + 1;  // ✅ Increment the version
+                int newFileName = latestVersion + 1;  //  Increment the version
         
                 String fileName = originalFile.getFileName() + "_v" + newFileName;
 
