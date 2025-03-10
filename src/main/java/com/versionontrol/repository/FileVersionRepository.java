@@ -14,7 +14,7 @@ public interface FileVersionRepository extends JpaRepository<FileVersion,Long>{
     List<FileVersion> findByOriginalFileIdOrderByVersionDesc(Long originalFileId);
     List<FileVersion> findByOriginalFileIdAndUserId(Long originalFileId, Long userId);
 
-    Optional<FileVersion> findById(Long versionId);
+   // Optional<FileVersion> findById(Long versionId);
 
     @Query("SELECT MAX(f.version) FROM FileVersion f WHERE f.originalFile.id = :originalFileId")
     Optional<Integer> findLatestVersionByOriginalFileId(@Param("originalFileId") Long originalFileId);
