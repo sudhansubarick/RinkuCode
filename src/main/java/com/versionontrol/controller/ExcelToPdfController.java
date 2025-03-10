@@ -29,7 +29,7 @@ public class ExcelToPdfController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "converted.pdf");
+         //   headers.setContentDispositionFormData("attachment", "converted.pdf");
 
             return ResponseEntity.ok()
                     .headers(headers)

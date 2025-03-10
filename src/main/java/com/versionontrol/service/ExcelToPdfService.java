@@ -85,7 +85,7 @@ public class ExcelToPdfService {
                         }
                        
                     }
-                    Font adjustedFont = new Font(Font.FontFamily.HELVETICA, 6, fontStyle, textColor);
+                    Font adjustedFont = new Font(Font.FontFamily.HELVETICA,  (fontStyle == Font.BOLD ? 8 : 6), fontStyle, textColor);
                     
                     PdfPCell pdfCell = new PdfPCell(new Phrase(cellValue,adjustedFont));
                     pdfCell.setPadding(2);
