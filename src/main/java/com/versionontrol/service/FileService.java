@@ -63,23 +63,33 @@ public class FileService {
     }
 
     public FileVersion saveFileVersion(MultipartFile file, Long originalFileId,Long userId) throws IOException {
-        String fileName = file.getOriginalFilename();
-      //  Path targetLocation = this.fileStorageLocation.resolve(fileName);
+       // String fileName = file.getOriginalFilename();
+       // Path targetLocation = this.fileStorageLocation.resolve(fileName);
 
 
-        String fileExtension = "";
+        // String fileExtension = "";
 
-        if (fileName != null && fileName.contains(".")) {
-            fileExtension = fileName.substring(fileName.lastIndexOf("."));
-            fileName = fileName.substring(0, fileName.lastIndexOf("."));
-        }
+        // if (fileName != null && fileName.contains(".")) {
+        //     fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        //     fileName = fileName.substring(0, fileName.lastIndexOf("."));
+        // }
 
 
-        // Append Timestamp to Make it Unique
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        String newFileName = fileName + "_" + timestamp + fileExtension;
+        // // Append Timestamp to Make it Unique
+        // String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        // String newFileName = fileName + "_" + timestamp + fileExtension;
 
-        Path targetLocation = fileStorageLocation.resolve(newFileName);
+        //  Find the original file
+        OriginalFile originalFile = originalFileRepository.findById(originalFileId)
+                .orElseThrow(() -> new RuntimeException("Original file not found"));
+
+                //  Get latest version number (default to 0 if no previous versions exist)
+                int latestVersion = fileVersionRepository.findLatestVersionByOriginalFileId(originalFileId).orElse(0);
+                int newFileName = latestVersion + 1;  //  Increment the version
+        
+                String fileName = originalFile.getFileName() + "_v" + newFileName;
+
+        Path targetLocation = fileStorageLocation.resolve(fileName);
 
           // Find the user
           User user = userRepository.findById(userId)
@@ -87,9 +97,6 @@ public class FileService {
 
         // Copy File
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-        // Save the file to the filesystem
-        //Files.copy(file.getInputStream(), targetLocation);
 
         // Determine the next version number
         int nextVersion = fileVersionRepository.findByOriginalFileIdOrderByVersionDesc(originalFileId)
@@ -107,9 +114,9 @@ public class FileService {
         fileVersion.setUser(user);
 
         // Associate with the original file 
-        OriginalFile originalFile = originalFileRepository.findById(originalFileId)
+        OriginalFile originalFiles = originalFileRepository.findById(originalFileId)
                 .orElseThrow(() -> new RuntimeException("Original file not found"));
-        fileVersion.setOriginalFile(originalFile);
+        fileVersion.setOriginalFile(originalFiles);
 
         return fileVersionRepository.save(fileVersion);
     }
@@ -117,21 +124,9 @@ public class FileService {
     public List<FileVersion> getFileVersionsByOriginalFileIdAndUserId(Long originalFileId, Long userId) {
         return fileVersionRepository.findByOriginalFileIdAndUserId(originalFileId, userId);
     }
-    // public List<FileVersion> getFileVersions(Long originalFileId) {
-    //     return fileVersionRepository.findByOriginalFileIdOrderByVersionDesc(originalFileId);
-    // }
+   
 
 //Get version File
-
-// public FileVersion getFileVersionById(Long versionId) {
-//     return fileVersionRepository.findById(versionId)
-//             .orElseThrow(() -> new RuntimeException("File version not found with ID: " + versionId));
-// }
-
-// public FileVersion getFileVersionByUserAndVersion(Long userId, Long versionId) {
-//     return fileVersionRepository.findByVersionIdAndUserId(versionId, userId)
-//             .orElseThrow(() -> new RuntimeException("File version not found for User ID: " + userId + " and Version ID: " + versionId));
-// }
 
 public FileVersion getFileVersionByIds(Long versionId, Long userId, Long originalFileId) {
     return fileVersionRepository.findByVersionIdAndUserIdAndOriginalFileId(versionId, userId, originalFileId)
@@ -141,11 +136,6 @@ public FileVersion getFileVersionByIds(Long versionId, Long userId, Long origina
     // //Get original File
 
 
-    // public OriginalFile getFileById(Long id) {
-    //     return originalFileRepository.findById(id)
-    //             .orElseThrow(() -> new RuntimeException("File not found with ID: " + id));
-    // }
-
     public OriginalFile getFileByUserIdAndFileId(Long userId, Long fileId) {
         return originalFileRepository.findByUserIdAndFileId(userId, fileId)
                 .orElseThrow(() -> new RuntimeException("File not found for User ID: " + userId + " and File ID: " + fileId));
@@ -153,10 +143,6 @@ public FileVersion getFileVersionByIds(Long versionId, Long userId, Long origina
 
     //find latest version file
 
-    // public FileVersion getLatestFileVersion(Long originalFileId) {
-    //     return fileVersionRepository.findLatestVersionByOriginalFileId(originalFileId)
-    //             .orElseThrow(() -> new RuntimeException("No versions found for file with ID: " + originalFileId));
-    // }
 
     public FileVersion getLatestFileVersion(Long originalFileId, Long userId) {
         return fileVersionRepository.findLatestVersionByOriginalFileIdAndUserId(originalFileId, userId)

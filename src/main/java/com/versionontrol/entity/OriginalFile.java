@@ -52,8 +52,6 @@ public class OriginalFile {
     @OneToMany(mappedBy = "originalFile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FileVersion> fileVersions;
 
-    // @ManyToOne
-    // @JoinColumn(name = "original_file_id")
-    // private OriginalFile originalFile;
+   
 
 }
